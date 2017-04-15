@@ -15,16 +15,20 @@
 
 
 # получение авторизации
-# https://oauth.vk.com/authorize?client_id=5972289&redirect_uri=vk.com&scope=notify,friends,wall,offline,groups,stats&display=page&response_type=token&state=zalupa
+# https://oauth.vk.com/authorize?client_id=5972289&redirect_uri=vk.com&scope=notify,
+# friends,wall,offline,groups,stats&display=page&response_type=token&state=zalupa
 
 # токен
-# http://api.vk.com/blank.html#access_token=283c430895f6d738928e3933b282154c28e0c40647116f647a216778db02e187c5e0c4e40c08a5b6b877a&expires_in=0&user_id=1626924&state=zalupa
+# http://api.vk.com/blank.html#access_token=283c430895f6d738928e3933b282154c28e0c40
+# 647116f647a216778db02e187c5e0c4e40c08a5b6b877a&expires_in=0&user_id=1626924&state=zalupa
 
 # получение групп, где пользователь админ
-# https://api.vk.com/method/groups.get?extended=1&user_id=1626924&count=7&v=5.63&access_token=283c430895f6d738928e3933b282154c28e0c40647116f647a216778db02e187c5e0c4e40c08a5b6b877a&user_id=1626924
+# https://api.vk.com/method/groups.get?extended=1&user_id=1626924&count=7&v=5.63
+# &access_token=283c430895f6d738928e3933b282154c28e0c40647116f647a216778db02e187c5e0c4e40c08a5b6b877a&user_id=1626924
 
 # статистика по постам группы
-# https://api.vk.com/method/wall.get?owner_id=-412597&user_id=1626924&v=5.63&access_token=283c430895f6d738928e3933b282154c28e0c40647116f647a216778db02e187c5e0c4e40c08a5b6b877a&app_id=5972289&count=100
+# https://api.vk.com/method/wall.get?owner_id=-412597&user_id=1626924&v=5.63
+# &access_token=283c430895f6d738928e3933b282154c28e0c40647116f647a216778db02e187c5e0c4e40c08a5b6b877a&app_id=5972289&count=100
 
 
 from flask import Flask, abort, request, jsonify
@@ -63,7 +67,6 @@ def index():
 	to_paste = ''
 
 	raw_post_info = oduvan_stat['response']['items']
-	print(type(oduvan_stat['response']['items']))
 
 	likes_stat = {
 		# 201602: 2
@@ -71,11 +74,14 @@ def index():
 
 	for raw_stat_item in raw_post_info:
 		if likes_stat.get('date') == time.strftime("%Y-%m-%d", time.localtime(raw_stat_item['date'])):
-			likes_stat[time.strftime("%Y-%m-%d", time.localtime(raw_stat_item['date']))] = int(likes_stat[time.strftime("%Y-%m-%d", time.localtime(raw_stat_item['date']))]) + int(raw_stat_item['likes']['count'])
+			likes_stat[time.strftime("%Y-%m-%d", time.localtime(raw_stat_item['date']))] = \
+			int(likes_stat[time.strftime("%Y-%m-%d", time.localtime(raw_stat_item['date']))]) + int(raw_stat_item['likes']['count'])
 		else:
 			likes_stat[time.strftime("%Y-%m-%d", time.localtime(raw_stat_item['date']))] = raw_stat_item['likes']['count']
 
-	print(likes_stat['2013-10-14'])
+	likes_stat_json=json.dumps(likes_stat)
+	# print(likes_stat)
+	# print(likes_stat_json)
 
 
 	for date, likes_amount in sorted(likes_stat.items(),reverse=True):
@@ -84,18 +90,100 @@ def index():
 			date,
 			likes_amount,
 		)
-	print(to_paste)
+	# print(to_paste)
 
+	likes_stat_new = sorted(list(likes_stat.items()))
 
+	# likes_stat_new = str(likes_stat_new)
+	# likes_stat_new = likes_stat_new[11:(len(likes_stat_new)-1)]
+	# print(likes_stat_new)
+	# x_axis = str(likes_stat.keys())[10:(len(str(likes_stat.keys()))-1)]
+	x_axis = sorted(list(likes_stat.keys()))
+
+	likes_stat_fixed = ([
+	['Date.UTC(2013,5,2)',0.7695],
+	['Date.UTC(2013,5,3)',0.7648],
+	['Date.UTC(2013,5,4)',0.7645]
+	]);
+
+	likes_stat_fixed2 = ([
+	('2013-05-02',0.7695),
+	('2013-05-03',0.7648)
+	]);
 
 	return '''
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+<script> var data = %s;
+    Highcharts.chart('container', {
+        chart: {
+            zoomType: 'x'
+        },
+        title: {
+            text: 'Статистика лайков в группе ФК ОдуванчЭк по дням'
+        },
+        subtitle: {
+            text: document.ontouchstart === undefined ?
+                    'Выделите интересующую часть графика, чтобы приблизить' : ' smth'
+        },
+        xAxis: {
+            categories: %s
+        },
+        yAxis: {
+            title: {
+                text: 'Количество лайков'
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            area: {
+                fillColor: {
+                    linearGradient: {
+                        x1: 0,
+                        y1: 0,
+                        x2: 0,
+                        y2: 1
+                    },
+                    stops: [
+                        [0, Highcharts.getOptions().colors[0]],
+                        [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                    ]
+                },
+                marker: {
+                    radius: 2
+                },
+                lineWidth: 1,
+                states: {
+                    hover: {
+                        lineWidth: 1
+                    }
+                },
+                threshold: null
+            }
+        },
+
+        series: [{
+            type: 'area',
+            name: 'Количество лайков',
+            data: data
+        }]
+    });
+</script>
+
+	<h1>Статистика лайков группы ФК ОдуванчЭк в табличном виде</h1><br> 
 <table>
 	<tr>
 		<th>Дата</th>
 		<th>Количество лайков</th>
 	</tr>
 	<tr>%s</tr>
-</table>''' % to_paste
+</table>''' % (likes_stat_new, x_axis, to_paste)
 
 
 

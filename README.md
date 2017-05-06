@@ -29,5 +29,5 @@
 
 https://vk.com/club19820?w=wall-19820_863%2Fall
 
-https://serene-everglades-11576.herokuapp.com/ | https://git.heroku.com/serene-everglades-11576.git
+https://quiet-citadel-55445.herokuapp.com/ | https://git.heroku.com/quiet-citadel-55445.git
 https://devcenter.heroku.com/articles/getting-started-with-python#view-logs

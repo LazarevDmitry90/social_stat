@@ -2,3 +2,4 @@ Flask==0.12.1
 Jinja2==2.9.6
 requests==2.13.0
 SQLAlchemy==1.1.9
+gunicorn==19.0.0

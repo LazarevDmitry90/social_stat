@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+<title>Статистика групп ВКонтакте</title>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+
+<h3 style="margin-left: 10px">По какой группе Вы бы хотели получить статистику?</h3>
+<form method="get">
+<select name="group_id" class="form-control" style="width:400px; display: inline; margin-left: 10px;">
+{% for id, name in group_list_dict.items() %}
+  <option value="{{id|safe}}">{{name|safe}}</option>
+{% endfor %}
+</select>
+<input type="submit" class="btn btn-primary" value="Показать статистику">
+</form>
+
+
+<center>
+<h3>На данный момент представленна статистика по группе
+<p style="color: blue; margin-top: 5px; margin-bottom: 5px">{{current_group_name|safe}}
+</p>
+</h3>
+</center>
+
+<div id="likes_repost_graph" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="views_graph" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+<div>
+<script type="text/javascript"> 
+    var data = {{likes_stat|safe}};
+    var data2 = {{reposts_stat|safe}};
+    Highcharts.chart('likes_repost_graph', {
+        chart: {
+            zoomType: 'x'
+        },
+        title: {
+            text: 'Статистика лайков в группе "{{current_group_name|safe}}" по дням'
+        },
+        subtitle: {
+            text: document.ontouchstart === undefined ?
+                    'Выделите интересующую часть графика, чтобы приблизить' : 'smth'
+        },
+        xAxis: {
+            categories: {{xaxis_likes|safe}}
+        },
+        yAxis: {
+            title: {
+                text: 'Количество лайков'
+            }
+        },
+        legend: {
+            enabled: true
+        },
+        plotOptions: {
+            area: {
+                fillColor: {
+                    linearGradient: {
+                        x1: 0,
+                        y1: 0,
+                        x2: 0,
+                        y2: 1
+                    },
+                    stops: [
+                        [0, Highcharts.getOptions().colors[0]],
+                        [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                    ]
+                },
+                marker: {
+                    radius: 2
+                },
+                lineWidth: 1,
+                states: {
+                    hover: {
+                        lineWidth: 1
+                    }
+                },
+                threshold: null
+            }
+        },
+
+        series: [{
+            type: 'area',
+            name: 'Количество лайков',
+            data: data
+        },
+        {
+            type: 'area',
+            name: 'Количество репостов',
+            data: data2
+        }
+        ]
+    });
+</script>
+</div>
+
+<div>
+<script type="text/javascript">
+    var data3 = {{views_stat|safe}};
+    Highcharts.chart('views_graph', {
+    chart: {
+        type: 'line'
+    },
+    title: {
+        text: 'Количество просмотров группы "{{current_group_name|safe}}"'
+    },
+    xAxis: {
+        categories: {{xaxis_views|safe}}
+    },
+    yAxis: {
+        title: {
+            text: 'Количество просмотров'
+        }
+    },
+    legend: {
+        enabled: false
+    },
+    plotOptions: {
+        line: {
+            dataLabels: {
+                enabled: false
+            },
+            enableMouseTracking: true
+        }
+    },
+    series: [{
+        name: 'Количество просмотров',
+        data: data3
+    }]
+});
+</script>
+</div>
+
+	<h3>Статистика лайков группы "{{current_group_name|safe}}" в табличном виде</h3><br> 
+<table>
+	<tr>
+		<th>Дата</th>
+		<th>Количество лайков</th>
+	</tr>
+	<tr>{{likes_table|safe}}</tr>
+</table>
+
+</html>

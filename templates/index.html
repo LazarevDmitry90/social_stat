@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <title>Статистика групп ВКонтакте</title>
+<body>
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
 
@@ -15,6 +16,7 @@
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 
 
+<div style="background: url(http://365psd.ru/images/backgrounds/bg-light-4868.png);">
 <h3 style="margin-left: 10px">По какой группе Вы бы хотели получить статистику?</h3>
 <form method="get">
 <select name="group_id" class="form-control" style="width:400px; display: inline; margin-left: 10px;">
@@ -32,6 +34,7 @@
 </p>
 </h3>
 </center>
+</div>
 
 <div id="likes_repost_graph" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <div id="views_graph" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
@@ -142,7 +145,7 @@
 </div>
 
 	<h3>Статистика лайков группы "{{current_group_name|safe}}" в табличном виде</h3><br> 
-<table>
+<table class="table table-striped" style="width: 300px; margin-left: 10px;">
 	<tr>
 		<th>Дата</th>
 		<th>Количество лайков</th>
@@ -150,4 +153,5 @@
 	<tr>{{likes_table|safe}}</tr>
 </table>
 
+</body>
 </html>

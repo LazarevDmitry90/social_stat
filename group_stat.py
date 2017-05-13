@@ -17,7 +17,6 @@ def index():
 	group_list_raw = get_group_info(config.GROUP_API_ENDPOINT)
 	group_list_dict= get_group_ids_list(group_list_raw)
 	group_list = list(group_list_dict.keys())
-	print(type(group_list_dict))
 
 	if request.args.get('group_id'):
 		config.GROUP_ID = '-' + request.args.get('group_id')

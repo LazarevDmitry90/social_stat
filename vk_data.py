@@ -27,7 +27,6 @@ def get_group_info(url, extra_params=None):
 
 
 def get_group_ids_list(raw_data):
-	print(raw_data)
 	new_raw_data=raw_data['response']['items']
 	# group_list=[]
 	# for item in new_raw_data:

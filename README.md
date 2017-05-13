@@ -31,3 +31,5 @@ https://vk.com/club19820?w=wall-19820_863%2Fall
 
 https://quiet-citadel-55445.herokuapp.com/ | https://git.heroku.com/quiet-citadel-55445.git
 https://devcenter.heroku.com/articles/getting-started-with-python#view-logs
+
+http://37.143.13.94:8080/
